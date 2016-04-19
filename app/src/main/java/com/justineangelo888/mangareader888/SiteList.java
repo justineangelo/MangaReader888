@@ -13,9 +13,15 @@ import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.AccountPicker;
+import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
 import java.util.Arrays;
+import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class SiteList extends AppCompatActivity {
@@ -38,6 +44,123 @@ public class SiteList extends AppCompatActivity {
     }
 
     private void initialized() {
+        ApiUtil.sharedInstance().getSiteList().enqueue(new Callback<List<SiteListModel>>() {
+            @Override
+            public void onResponse(Call<List<SiteListModel>> call, Response<List<SiteListModel>> response) {
+                Log.i("getSiteList", "" + response.isSuccessful());
+                Log.i("getSiteList", "" + call.request().url().toString());
+                Log.i("getSiteList", "code : " + response.code() + " Description : " + response.message());
+                for (SiteListModel site:response.body()) {
+                    Log.i("getSiteList",site.siteId);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<SiteListModel>> call, Throwable t) {
+
+            }
+        });
+        ApiUtil.sharedInstance().getGenreList("mangareader.net").enqueue(new Callback<List<GenreListModel.Genre>>() {
+            @Override
+            public void onResponse(Call<List<GenreListModel.Genre>> call, Response<List<GenreListModel.Genre>> response) {
+                Log.i("getGenreList", "" + response.isSuccessful());
+                Log.i("getGenreList", "" + call.request().url().toString());
+                Log.i("getGenreList", "code : " + response.code() + " Description : " + response.message());
+                for (GenreListModel.Genre genre:response.body()) {
+                    Log.i("getSiteList",genre.genreId);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<GenreListModel.Genre>> call, Throwable t) {
+
+            }
+        });
+
+        ApiUtil.sharedInstance().getMangaList("mangareader.net", null, null, null).enqueue(new Callback<List<MangaListModel.Manga>>() {
+            @Override
+            public void onResponse(Call<List<MangaListModel.Manga>> call, Response<List<MangaListModel.Manga>> response) {
+                Log.i("getMangaList", "" + response.isSuccessful());
+                Log.i("getMangaList", "" + call.request().url().toString());
+                Log.i("getMangaList", "code : " + response.code() + " Description : " + response.message());
+                for (MangaListModel.Manga manga:response.body()) {
+                    Log.i("getMangaList",manga.mangaId);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<MangaListModel.Manga>> call, Throwable t) {
+
+            }
+        });
+
+        ApiUtil.sharedInstance().getManga("mangareader.net", "pretty-face").enqueue(new Callback<MangaModel>() {
+            @Override
+            public void onResponse(Call<MangaModel> call, Response<MangaModel> response) {
+                Log.i("getManga", "" + response.isSuccessful());
+                Log.i("getManga", "" + call.request().url().toString());
+                Log.i("getManga", "code : " + response.code() + " Description : " + response.message());
+                MangaModel manga = response.body();
+                Log.i("getManga",manga.href);
+            }
+
+            @Override
+            public void onFailure(Call<MangaModel> call, Throwable t) {
+
+            }
+        });
+
+        ApiUtil.sharedInstance().getMangaList("mangareader.net", "yaoi", null, null).enqueue(new Callback<List<MangaListModel.Manga>>() {
+            @Override
+            public void onResponse(Call<List<MangaListModel.Manga>> call, Response<List<MangaListModel.Manga>> response) {
+                Log.i("getMangaByGenre", "" + response.isSuccessful());
+                Log.i("getMangaByGenre", "" + call.request().url().toString());
+                Log.i("getMangaByGenre", "code : " + response.code() + " Description : " + response.message());
+                for (MangaListModel.Manga manga:response.body()) {
+                    Log.i("getMangaByGenre",manga.mangaId);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<MangaListModel.Manga>> call, Throwable t) {
+
+            }
+        });
+
+        ApiUtil.sharedInstance().getChapter("mangareader.net","sengoku-paradise","1").enqueue(new Callback<ChapterModel>() {
+            @Override
+            public void onResponse(Call<ChapterModel> call, Response<ChapterModel> response) {
+                Log.i("getChapter", "" + response.isSuccessful());
+                Log.i("getChapter", "" + call.request().url().toString());
+                Log.i("getChapter", "code : " + response.code() + " Description : " + response.message());
+                ChapterModel chapter = response.body();
+                Log.i("getChapter", chapter.href);
+                Log.i("getChapter", "" + chapter.pages.size());
+            }
+
+            @Override
+            public void onFailure(Call<ChapterModel> call, Throwable t) {
+
+            }
+        });
+
+        ApiUtil.sharedInstance().search("mangareader.net",null,null,null,null,"naruto").enqueue(new Callback<List<MangaListModel.Manga>>() {
+            @Override
+            public void onResponse(Call<List<MangaListModel.Manga>> call, Response<List<MangaListModel.Manga>> response) {
+                Log.i("search", "" + response.isSuccessful());
+                Log.i("search", "" + call.request().url().toString());
+                Log.i("search", "code : " + response.code() + " Description : " + response.message());
+                for (MangaListModel.Manga manga:response.body()) {
+                    Log.i("search",manga.mangaId);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<MangaListModel.Manga>> call, Throwable t) {
+
+            }
+        });
+
         final SiteListGridViewAdapter gridViewAdapter = new SiteListGridViewAdapter();
         gridViewAdapter.siteListNames = Arrays.asList("SiteListModel 1", "SiteListModel 2", "SiteListModel 3");
         final GridView siteListGridView = (GridView) findViewById(R.id.gridView);

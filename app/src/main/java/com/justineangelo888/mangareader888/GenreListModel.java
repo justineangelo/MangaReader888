@@ -1,4 +1,4 @@
-package com.justineangelo888.mangareader888.ApiModels;
+package com.justineangelo888.mangareader888;
 
 import java.util.List;
 
