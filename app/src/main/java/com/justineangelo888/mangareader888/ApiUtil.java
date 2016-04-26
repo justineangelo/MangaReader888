@@ -27,13 +27,13 @@ public class ApiUtil {
             @Override
             public Response intercept(Interceptor.Chain chain) throws IOException {
                 Request request = chain.request().newBuilder()
-                        .addHeader("X-Mashape-Key", headerKey)
-                        .addHeader("Accept", "text/plain")
+                        .header("X-Mashape-Key", headerKey)
+                        .header("Accept", "text/plain")
                         .build();
                 return chain.proceed(request);
             }
         }).build();
-        instance.retrofit = new Retrofit.Builder().baseUrl(baseUrl).client(httpClient).addConverterFactory(GsonConverterFactory.create()).addConverterFactory(GsonConverterFactory.create()).build();
+        instance.retrofit = new Retrofit.Builder().baseUrl(baseUrl).client(httpClient).addConverterFactory(GsonConverterFactory.create()).build();
         instance.service = instance.retrofit.create(MangaScraperApiUtil.class);
         return instance;
     }
