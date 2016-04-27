@@ -4,7 +4,6 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -13,26 +12,21 @@ import android.widget.Toast;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.gson.Gson;
 import com.justineangelo888.mangareader888.SSApi.Models.Main.Data;
-import com.justineangelo888.mangareader888.SSApi.Models.Main.Error;
 import com.justineangelo888.mangareader888.SSApi.Models.Main.Sub.SubAttribute;
 import com.justineangelo888.mangareader888.SSApi.Models.Main.Sub.SubRelationship;
 import com.justineangelo888.mangareader888.SSApi.Models.Request.CreateDeviceDataRequest;
 import com.justineangelo888.mangareader888.SSApi.Models.Request.ForgotPasswordRequest;
-import com.justineangelo888.mangareader888.SSApi.Models.Request.SignInRequest;
-import com.justineangelo888.mangareader888.SSApi.Models.Request.UpdateLeadsSettingsRequest;
-import com.justineangelo888.mangareader888.SSApi.Models.Response.Business;
+import com.justineangelo888.mangareader888.SSApi.Models.Request.UpdateJobFilterRequest;
 import com.justineangelo888.mangareader888.SSApi.Models.Response.Device;
+import com.justineangelo888.mangareader888.SSApi.Models.Response.Error;
 import com.justineangelo888.mangareader888.SSApi.Models.Response.JobFilter;
-import com.justineangelo888.mangareader888.SSApi.Models.Response.Lead;
-import com.justineangelo888.mangareader888.SSApi.Models.Response.Leads;
 import com.justineangelo888.mangareader888.SSApi.Models.Response.SubCategories;
 import com.justineangelo888.mangareader888.SSApi.Models.Response.Suburb;
 import com.justineangelo888.mangareader888.SSApi.Models.Response.User;
+import com.justineangelo888.mangareader888.SSApi.SSApiCompletionHandler;
 import com.justineangelo888.mangareader888.SSApi.SSApiUtil;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -297,14 +291,14 @@ public class SiteList extends AppCompatActivity {
 //        });
 
         //NOT OK
-        UpdateLeadsSettingsRequest updateLeadsSettingsRequest = UpdateLeadsSettingsRequest.init();
+        UpdateJobFilterRequest updateJobFilterRequest = UpdateJobFilterRequest.init();
 
         SubRelationship relationship = SubRelationship.init();
         List<Data> subcat = new ArrayList<Data>();
         subcat.add((new Data()).setId("161").setType("job_filter_sub_categories"));
         SubCategories job_filter_sub_categories =  SubCategories.init().setData(subcat);
 
-        updateLeadsSettingsRequest.data
+        updateJobFilterRequest.data
             .setType("job_filters")
             .setAttributes(
                 SubAttribute.init()
@@ -316,22 +310,14 @@ public class SiteList extends AppCompatActivity {
                     .setJob_filter_sub_categories(job_filter_sub_categories)
             );
 
-        SSApiUtil.sharedInstance("ygizHC5mSruBh7w7moYt").updateJobFilter("90737", updateLeadsSettingsRequest).enqueue(new Callback<JobFilter>() {
+        SSApiUtil.sharedInstance("ygizHC5mSruBh7w7moYt").updateJobFilter("90737", updateJobFilterRequest).initiate(new SSApiCompletionHandler <JobFilter>() {
             @Override
-            public void onResponse(Call<JobFilter> call, Response<JobFilter> response) {
-                JobFilter user = response.body();
-                Log.i("updateJobFilter", "is successful? " + response.isSuccessful() + " code : " + response.code() + " description : " + response.message());
-                Log.i("updateJobFilter", "" + call.request().url().toString());
-                if (user.getData() != null) {
-                    Log.i("updateJobFilter", "Has Data");
-                    Log.i("updateJobFilter", " user id: " + user.getData().getId());
-                } else {
-                    Log.i("updateJobFilter", "No Data");
-                }
+            public void success(JobFilter response) {
+
             }
 
             @Override
-            public void onFailure(Call<JobFilter> call, Throwable t) {
+            public void failed(Error error) {
 
             }
         });
@@ -350,52 +336,28 @@ public class SiteList extends AppCompatActivity {
                 .setRelationships(SubRelationship.init()
                         .setUser(User.init()
                                 .setData(Data.init().setId("713180").setType("users"))));
-
-        SSApiUtil.sharedInstance("ygizHC5mSruBh7w7moYt").createDeviceData(createDeviceDataRequest).enqueue(new Callback<Device>() {
+        SSApiUtil.sharedInstance("ygizHC5mSruBh7w7moYt").createDeviceData(createDeviceDataRequest).initiate(new SSApiCompletionHandler <Device>() {
             @Override
-            public void onResponse(Call<Device> call, Response<Device> response) {
-                Device device = response.body();
-                Log.i("createDeviceData", "resp : " + response.raw());
-                Log.i("createDeviceData", "is successful? " + response.isSuccessful() + " code : " + response.code() + " description : " + response.message());
-                Log.i("createDeviceData", "" + call.request().url().toString());
-                if (device.getData() != null) {
-                    Log.i("createDeviceData", "Has Data");
-                    Log.i("createDeviceData", " user id: " + device.getData().getId());
-                } else {
-                    Log.i("createDeviceData", "No Data");
-                }
+            public void success(Device response) {
+
             }
 
             @Override
-            public void onFailure(Call<Device> call, Throwable t) {
+            public void failed(Error error) {
 
             }
         });
 
         ForgotPasswordRequest request = ForgotPasswordRequest.init();
         request.data.setAttributes(SubAttribute.init().setEmail("justine@serviceseeking.com.au"));
-        SSApiUtil.sharedInstance("ygizHC5mSruBh7w7moYt").forgotPassword(request).enqueue(new Callback<User>() {
+        SSApiUtil.sharedInstance("ygizHC5mSruBh7w7moYt").forgotPassword(request).initiate(new SSApiCompletionHandler<User>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                Gson gson = new Gson();
-                try {
-                    Error error = gson.fromJson(response.errorBody().string(), Error.class);
-                    Log.i("forgotPassword", "resp detail: " + error.getErrors().get(0).getDetail());
-//                    Log.i("forgotPassword", "resp : " + response.errorBody().string());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            public void success(User response) {
 
-                Log.i("forgotPassword", "is successful? " + response.isSuccessful() + " code : " + response.code() + " description : " + response.message());
-                Log.i("forgotPassword", "" + call.request().url().toString());
-                if (response.body() == null) {
-                    Log.i("forgotPassword", "not able to parse");
-                }
-                User user = response.body();
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void failed(Error error) {
 
             }
         });

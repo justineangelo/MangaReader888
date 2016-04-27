@@ -3,7 +3,7 @@ package com.justineangelo888.mangareader888.SSApi;
 import com.justineangelo888.mangareader888.SSApi.Models.Request.CreateDeviceDataRequest;
 import com.justineangelo888.mangareader888.SSApi.Models.Request.ForgotPasswordRequest;
 import com.justineangelo888.mangareader888.SSApi.Models.Request.SignInRequest;
-import com.justineangelo888.mangareader888.SSApi.Models.Request.UpdateLeadsSettingsRequest;
+import com.justineangelo888.mangareader888.SSApi.Models.Request.UpdateJobFilterRequest;
 import com.justineangelo888.mangareader888.SSApi.Models.Response.Business;
 import com.justineangelo888.mangareader888.SSApi.Models.Response.Device;
 import com.justineangelo888.mangareader888.SSApi.Models.Response.JobFilter;
@@ -142,7 +142,7 @@ public interface SSApiServices {
     Call<JobFilter> updateJobFilter(
             @Header("Authorization") String auth_header,
             @Path("job_filter_id") String job_filter_id,
-            @Body UpdateLeadsSettingsRequest request);
+            @Body UpdateJobFilterRequest request);
 
     //Get Quote
     //http://staging.serviceseeking.com.au/eois/3779987?include=job.suburb,job,messages
